@@ -378,6 +378,25 @@ async function resolveDeploymentBlock(chainConfig) {
   return Number(chainConfig.deploymentBlock ?? 0);
 }
 
+async function estimateGasForContract({
+  address,
+  abi,
+  functionName,
+  args = [],
+  value
+}) {
+  const chain = getChainById(currentChainId);
+  return publicClient.estimateContractGas({
+    account: currentAccount,
+    address: getAddress(address),
+    abi,
+    functionName,
+    args,
+    value,
+    chain: chain ?? undefined
+  });
+}
+
 async function hydrateAuctionState(rows) {
   const results = await Promise.all(
     rows.map(async (row) => {
@@ -631,7 +650,13 @@ auctionForm.addEventListener("submit", async (event) => {
       abi: ABI_CREATE,
       functionName: "createAuction",
       args: [label, biddingTime],
-      chain: chain ?? undefined
+      chain: chain ?? undefined,
+      gas: await estimateGasForContract({
+        address: chainConfig.address,
+        abi: ABI_CREATE,
+        functionName: "createAuction",
+        args: [label, biddingTime]
+      })
     });
 
     const explorer = getExplorerBase(currentChainId);
@@ -687,7 +712,13 @@ bidForm.addEventListener("submit", async (event) => {
       abi: ABI_AUCTION_BID,
       functionName: "bid",
       value: parseEther(valueEth),
-      chain: chain ?? undefined
+      chain: chain ?? undefined,
+      gas: await estimateGasForContract({
+        address: currentBidAuction,
+        abi: ABI_AUCTION_BID,
+        functionName: "bid",
+        value: parseEther(valueEth)
+      })
     });
     const link = currentExplorerBase
       ? `${currentExplorerBase}/tx/${hash}`
@@ -720,7 +751,12 @@ gridBody.addEventListener("click", async (event) => {
         address: getAddress(auction),
         abi: ABI_AUCTION_WITHDRAW,
         functionName: "withdraw",
-        chain: chain ?? undefined
+        chain: chain ?? undefined,
+        gas: await estimateGasForContract({
+          address: auction,
+          abi: ABI_AUCTION_WITHDRAW,
+          functionName: "withdraw"
+        })
       });
       const link = currentExplorerBase
         ? `${currentExplorerBase}/tx/${hash}`
@@ -740,7 +776,12 @@ gridBody.addEventListener("click", async (event) => {
         address: getAddress(auction),
         abi: ABI_AUCTION_END,
         functionName: "endAuction",
-        chain: chain ?? undefined
+        chain: chain ?? undefined,
+        gas: await estimateGasForContract({
+          address: auction,
+          abi: ABI_AUCTION_END,
+          functionName: "endAuction"
+        })
       });
       const link = currentExplorerBase
         ? `${currentExplorerBase}/tx/${hash}`
