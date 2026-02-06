@@ -16,8 +16,9 @@ contract SimpleAuction {
     event BidPlaced(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
 
-    constructor(uint _biddingTime) {
-        owner = msg.sender;
+    constructor(uint _biddingTime, address _owner) {
+        require(_owner != address(0), "Invalid owner");
+        owner = _owner;
         auctionEndTime = block.timestamp + _biddingTime;
     }
     

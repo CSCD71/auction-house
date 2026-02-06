@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { expect, describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { expect, describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createPublicClient, createWalletClient, http, decodeEventLog, formatEther, isAddress } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -66,7 +66,7 @@ describe("Auction House", function () {
     
     describe("New Auction", function (){
         
-    	it("Should create a new auction", async function () {
+        it("Should create a new auction", async function () {
             const { address, abi } = contract;
             // parameters
             const label = "User1's auction";
@@ -83,12 +83,21 @@ describe("Auction House", function () {
             expect(eventName).to.equal('AuctionDeployed');
             // check auction
             expect(isAddress(args.auction)).toBe(true);
+            const auctionAddress = args.auction;
             // check owner
             expect(args.owner).to.equal(user1.account.address);
             // check label
             expect(args.label).to.equal(label);
              // check label
             expect(args.biddingTime).to.equal(biddingTime);
+            // verify SimpleAuction owner is the user, not AuctionHouse
+            const { abi: auctionAbi } = loadContract("SimpleAuction");
+            const deployedOwner = await client.readContract({
+                address: auctionAddress,
+                abi: auctionAbi,
+                functionName: "owner"
+            });
+            expect(deployedOwner).to.equal(user1.account.address);
     	});
     })
 });

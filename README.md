@@ -135,7 +135,7 @@ forge verify-contract \
 
 ### Running the Frontend
 
-The frontend code for our app is in the `static` folder. This code can be run a simple web server serving static pages.
+The frontend code for our app is in the `index.hmtl` (placed at the root for easier deployment) and in the `static` folder (javascript and css). This code can be run a simple web server serving static pages.
 
 As you develop the frontend, you should use a server that automatically reloads your files on changes. Any advanced code editor (like *Visual Studio Code*) can do that. Here, I'll use `browser-sync`:
 
@@ -148,7 +148,6 @@ As you develop the frontend, you should use a server that automatically reloads 
 2. Run the static files
 
   ```bash
-  cd static
   browser-sync start --files "**/*"
   ```
   

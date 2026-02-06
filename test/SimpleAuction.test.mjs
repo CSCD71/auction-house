@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { expect, describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { expect, describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createPublicClient, createWalletClient, http, parseEther, decodeEventLog, formatEther } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -60,7 +60,11 @@ describe("Simple Auction", function () {
         // compile the contract
         const { abi, bytecode } = loadContract("SimpleAuction");        
         // deploy contract
-        const hash = await owner.deployContract({ abi, bytecode, args: [biddingTime]});
+        const hash = await owner.deployContract({
+            abi,
+            bytecode,
+            args: [biddingTime, owner.account.address]
+        });
         // wait for the transaction to be confirmed
         const receipt = await client.waitForTransactionReceipt({ hash });
         receipts.push({label: "Deployment", receipt});
