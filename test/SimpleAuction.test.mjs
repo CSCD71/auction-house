@@ -63,7 +63,7 @@ describe("Simple Auction", function () {
         const hash = await owner.deployContract({
             abi,
             bytecode,
-            args: [biddingTime, owner.account.address]
+            args: [biddingTime]
         });
         // wait for the transaction to be confirmed
         const receipt = await client.waitForTransactionReceipt({ hash });

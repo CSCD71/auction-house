@@ -16,10 +16,14 @@ contract SimpleAuction {
     event BidPlaced(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
 
-    constructor(uint _biddingTime, address _owner) {
-        require(_owner != address(0), "Invalid owner");
-        owner = _owner;
+    constructor(uint _biddingTime) {
+        owner = msg.sender;
         auctionEndTime = block.timestamp + _biddingTime;
+    }
+    
+    function setOwner(address _owner) public{
+        require(msg.sender == owner, "Permission denied");
+        owner = _owner;
     }
     
     // Bid function: allows users to place a bid

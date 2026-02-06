@@ -14,7 +14,8 @@ contract AuctionHouse {
     );
 	
     function createAuction(string calldata label, uint biddingTime) public {
-        SimpleAuction auction = new SimpleAuction(biddingTime, msg.sender);
+        SimpleAuction auction = new SimpleAuction(biddingTime);
+        auction.setOwner(msg.sender);
         emit AuctionDeployed(address(auction), msg.sender, label, biddingTime);
     }
 }
